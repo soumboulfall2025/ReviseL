@@ -10,6 +10,8 @@ const fadeVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Dashboard = () => {
   const { user } = useAuth();
   const [submissions, setSubmissions] = useState([]);
@@ -18,7 +20,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
-    fetch('http://localhost:5000/api/progress/me', {
+    fetch(`${API_URL}/api/progress/me`, {
       headers: { Authorization: `Bearer ${user.token}` }
     })
       .then(async res => {

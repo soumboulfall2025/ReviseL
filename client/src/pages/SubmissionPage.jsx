@@ -12,6 +12,8 @@ const fadeVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SubmissionPage = () => {
   const [text, setText] = useState('');
   const [feedback, setFeedback] = useState(initialFeedback);
@@ -22,7 +24,7 @@ const SubmissionPage = () => {
     setLoading(true);
     setFeedback(initialFeedback);
     try {
-      const res = await fetch('http://localhost:5000/api/ia/correct', {
+      const res = await fetch(`${API_URL}/api/ia/correct`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ subject, content: text })
@@ -42,6 +44,23 @@ const SubmissionPage = () => {
         comment: data.feedback,
         axes
       });
+      // Enregistrement de la soumission dans la base
+      const token = localStorage.getItem('token');
+      if (token) {
+        await fetch(`${API_URL}/api/progress`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+          body: JSON.stringify({
+            subject, // nom ou id selon ce que vous stockez côté backend
+            content: text,
+            note,
+            feedback: data.feedback
+          })
+        });
+      }
     } catch (err) {
       setFeedback({ note: null, comment: err.message, axes: [] });
     } finally {

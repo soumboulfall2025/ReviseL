@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import AdminLogin from './pages/AdminLogin';
 import AdminHeader from './components/AdminHeader';
 import SubjectsAdmin from './pages/SubjectsAdmin';
+import StudentProgress from './pages/StudentProgress';
 
 function PrivateRoute({ children }) {
   const token = localStorage.getItem('token');
@@ -33,6 +34,11 @@ function App() {
         <Route path="/subjects" element={
           <PrivateRoute>
             <SubjectsAdmin />
+          </PrivateRoute>
+        } />
+        <Route path="/etudiant/:id" element={
+          <PrivateRoute>
+            <StudentProgress />
           </PrivateRoute>
         } />
         <Route path="/" element={<Home />} />

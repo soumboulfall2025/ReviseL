@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SubjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,8 +14,8 @@ const SubjectDetail = () => {
   useEffect(() => {
     setLoading(true);
     Promise.all([
-      fetch(`http://localhost:5000/api/subjects/${id}`).then(res => res.json()),
-      fetch(`http://localhost:5000/api/subjects/${id}/courses`).then(res => res.json())
+      fetch(`${API_URL}/api/subjects/${id}`).then(res => res.json()),
+      fetch(`${API_URL}/api/subjects/${id}/courses`).then(res => res.json())
     ])
       .then(([subjectData, coursesData]) => {
         setSubject(subjectData);

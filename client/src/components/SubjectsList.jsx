@@ -11,13 +11,15 @@ const cardVariants = {
   }),
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const SubjectsList = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/subjects')
+    fetch(`${API_URL}/api/subjects`)
       .then(async (res) => {
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));

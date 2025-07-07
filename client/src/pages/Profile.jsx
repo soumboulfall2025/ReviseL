@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../features/authContext.jsx';
 import { UserCircleIcon, PhoneIcon, EnvelopeIcon, CameraIcon } from '@heroicons/react/24/outline';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Profile = () => {
   const { user, login } = useAuth();
   const [edit, setEdit] = useState(false);
@@ -25,7 +27,7 @@ const Profile = () => {
     setLoading(true);
     setMessage('');
     try {
-      const res = await fetch('http://localhost:5000/api/auth/profile', {
+      const res = await fetch(`${API_URL}/api/auth/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

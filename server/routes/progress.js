@@ -56,4 +56,16 @@ router.get('/subjects', async (req, res) => {
   }
 });
 
+// Progression d'un étudiant par son ID (admin)
+router.get('/user/:id', async (req, res) => {
+  try {
+    const submissions = await Submission.find({ user: req.params.id })
+      .populate('subject')
+      .sort({ createdAt: -1 });
+    res.json(submissions);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 module.exports = router;

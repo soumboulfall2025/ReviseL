@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Init client (Vite + React + Tailwind + Framer Motion)",
+			"command": "npm create vite@latest . -- --template react && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && npm install framer-motion @heroicons/react @headlessui/react && npm install @fontsource/poppins @fontsource/inter @fontsource/nunito",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

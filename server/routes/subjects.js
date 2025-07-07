@@ -100,4 +100,15 @@ router.delete('/:id/courses/:courseId', adminOnly, async (req, res) => {
   }
 });
 
+// Récupérer une matière par son ID
+router.get('/:id', async (req, res) => {
+  try {
+    const subject = await Subject.findById(req.params.id);
+    if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
+    res.json(subject);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 module.exports = router;
