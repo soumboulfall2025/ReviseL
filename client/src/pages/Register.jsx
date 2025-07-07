@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -23,13 +25,17 @@ const Register = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Erreur serveur');
+      toast.success('Inscription réussie !');
       navigate('/login');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">

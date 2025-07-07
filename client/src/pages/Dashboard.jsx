@@ -3,7 +3,10 @@ import { motion } from 'framer-motion';
 import ProgressBar from '../components/ProgressBar';
 import QuoteOfTheDay from '../components/QuoteOfTheDay';
 import Badge from '../components/Badge';
+import AnimatedBadge from '../components/AnimatedBadge';
 import { useAuth } from '../features/authContext.jsx';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 const fadeVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -20,6 +23,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
+    setLoading(true);
     fetch(`${API_URL}/api/progress/me`, {
       headers: { Authorization: `Bearer ${user.token}` }
     })
@@ -30,8 +34,14 @@ const Dashboard = () => {
         }
         return res.json();
       })
-      .then(data => setSubmissions(data))
-      .catch(e => setError(e.message || 'Erreur chargement progression.'))
+      .then(data => {
+        setSubmissions(data);
+        toast.success('Progression chargée !');
+      })
+      .catch(e => {
+        setError(e.message || 'Erreur chargement progression.');
+        toast.error('Erreur lors du chargement.');
+      })
       .finally(() => setLoading(false));
   }, [user]);
 
@@ -40,9 +50,9 @@ const Dashboard = () => {
   const lastNotes = submissions.slice(-3).reverse().map(s => ({ subject: s.subject?.name, note: s.note }));
   // Badges fictifs (à améliorer)
   const badges = [
-    { label: 'Débutant', unlocked: submissions.length >= 1 },
-    { label: 'Assidu', unlocked: submissions.length >= 5 },
-    { label: 'Expert', unlocked: submissions.length >= 10 },
+    { label: 'Débutant', unlocked: submissions.length >= 1, icon: '🎓' },
+    { label: 'Assidu', unlocked: submissions.length >= 5, icon: '📚' },
+    { label: 'Expert', unlocked: submissions.length >= 10, icon: '🏅' },
   ];
 
   const quote = {
@@ -50,7 +60,7 @@ const Dashboard = () => {
     author: 'Winston Churchill',
   };
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
@@ -93,6 +103,14 @@ const Dashboard = () => {
             <Badge label={b.label} unlocked={b.unlocked} />
           </motion.div>
         ))}
+      </div>
+      <div className="mt-8">
+        <h3 className="text-base sm:text-lg font-semibold mb-2">Badges débloqués</h3>
+        <div className="flex gap-4 flex-wrap">
+          {badges.filter(b => b.unlocked).map(b => (
+            <AnimatedBadge key={b.label} icon={b.icon} label={b.label} />
+          ))}
+        </div>
       </div>
       <motion.div
         className="mt-6 sm:mt-8 p-3 sm:p-4 bg-violet-50 dark:bg-violet-900 rounded-lg shadow"

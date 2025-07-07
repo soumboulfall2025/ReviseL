@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../features/authContext.jsx';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -26,13 +28,17 @@ const Login = () => {
       if (!res.ok) throw new Error(data.message || 'Erreur serveur');
       localStorage.setItem('token', data.token);
       login(data.token, data.user); // on stocke aussi les infos user
+      toast.success('Connexion réussie !');
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">

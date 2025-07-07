@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,12 +22,16 @@ const SubjectDetail = () => {
       .then(([subjectData, coursesData]) => {
         setSubject(subjectData);
         setCourses(Array.isArray(coursesData) ? coursesData : []);
+        toast.success('Matière chargée !');
       })
-      .catch(() => setError('Erreur chargement matière ou cours.'))
+      .catch(() => {
+        setError('Erreur chargement matière ou cours.');
+        toast.error('Erreur lors du chargement.');
+      })
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!subject) return <div>Matière introuvable.</div>;
 

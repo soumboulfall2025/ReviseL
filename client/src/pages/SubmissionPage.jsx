@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
 
 const initialFeedback = {
   note: null,
@@ -44,6 +46,7 @@ const SubmissionPage = () => {
         comment: data.feedback,
         axes
       });
+      toast.success('Correction IA reçue !');
       // Enregistrement de la soumission dans la base
       const token = localStorage.getItem('token');
       if (token) {
@@ -63,10 +66,13 @@ const SubmissionPage = () => {
       }
     } catch (err) {
       setFeedback({ note: null, comment: err.message, axes: [] });
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <motion.div

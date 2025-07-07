@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useAuth } from '../features/authContext.jsx';
 import { UserCircleIcon, PhoneIcon, EnvelopeIcon, CameraIcon } from '@heroicons/react/24/outline';
+import Loader from '../components/Loader';
+import toast from 'react-hot-toast';
+import AnimatedBadge from '../components/AnimatedBadge';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -39,13 +42,17 @@ const Profile = () => {
       if (!res.ok) throw new Error(data.message || 'Erreur serveur');
       login(user.token, data); // met à jour le contexte et le localStorage
       setMessage('Profil mis à jour !');
+      toast.success('Profil mis à jour !');
       setEdit(false);
     } catch (err) {
       setMessage(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-8 flex flex-col items-center gap-6">
@@ -99,6 +106,15 @@ const Profile = () => {
         ) : (
           <button onClick={() => setEdit(true)} className="bg-violet-500 text-white px-4 py-2 rounded hover:bg-violet-600 transition">Modifier le profil</button>
         )}
+      </div>
+      <div className="mt-8">
+        <h3 className="text-base sm:text-lg font-semibold mb-2">Mes badges</h3>
+        <div className="flex gap-4 flex-wrap">
+          {/* Correction : fallback si user.badges absent */}
+          {(user.badges ? user.badges.filter(b => b.unlocked) : []).map(b => (
+            <AnimatedBadge key={b.label} icon={b.icon} label={b.label} />
+          ))}
+        </div>
       </div>
       {message && <div className="mt-4 text-center text-red-500">{message}</div>}
     </div>
