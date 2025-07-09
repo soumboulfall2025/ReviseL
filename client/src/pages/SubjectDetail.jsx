@@ -31,22 +31,26 @@ const SubjectDetail = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Fonction d'affichage robuste pour content
+  // Fonction d'affichage robuste et "cartée" pour content
   function renderContent(content) {
     if (typeof content === 'string') {
       return <span>{content}</span>;
     }
     if (typeof content === 'object' && content !== null) {
       return (
-        <div>
+        <div className="grid gap-3">
           {Object.entries(content).map(([key, value]) => (
-            <div key={key}>
-              <strong>{key} :</strong>{' '}
+            <div
+              key={key}
+              className="bg-gray-50 dark:bg-gray-900 rounded p-3 border border-gray-200 dark:border-gray-700 shadow transition-transform duration-300 hover:scale-105"
+              style={{ animation: 'fadeIn 0.5s' }}
+            >
+              <div className="font-semibold text-violet-700 mb-1 animate-pulse">{key.replace(/_/g, ' ')} :</div>
               {Array.isArray(value)
-                ? <ul>{value.map((v, i) => <li key={i}>{v}</li>)}</ul>
+                ? <ul className="list-disc list-inside ml-4">{value.map((v, i) => <li key={i}>{v}</li>)}</ul>
                 : typeof value === 'object'
                   ? renderContent(value)
-                  : String(value)
+                  : <span>{String(value)}</span>
               }
             </div>
           ))}
