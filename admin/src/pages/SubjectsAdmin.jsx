@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const API = 'http://localhost:5000/api/subjects';
+const API = import.meta.env.VITE_API_URL + '/api/subjects';
 
 const colors = [
   '#a78bfa', // violet
