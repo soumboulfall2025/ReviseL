@@ -67,7 +67,7 @@ const QuizInteractive = () => {
             {selected.courses.map((course, idx) => (
               <div key={course._id || idx} className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-5 border-t-4" style={{ borderColor: selected.color || '#a78bfa' }}>
                 <h3 className="text-lg font-bold text-violet-700 mb-2">{course.title}</h3>
-                {renderContent(course.content)}
+                {renderContent(course.content ?? '')}
                 {course.questions && Array.isArray(course.questions) && (
                   <QuizBlock questions={course.questions} />
                 )}

@@ -62,7 +62,7 @@ const RevisionCards = () => {
         <div key={card._id} className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-5 border-t-4" style={{ borderColor: card.subject?.color || '#a78bfa' }}>
           <div className="text-xs text-gray-400 mb-1">{card.subject?.name}</div>
           <h3 className="text-lg font-bold text-violet-700 mb-2">{card.title}</h3>
-          {renderContent(card.content)}
+          {renderContent(card.content ?? '')}
           {card.questions && Array.isArray(card.questions) && (
             <div className="mt-3">
               <div className="font-semibold text-green-700 mb-1">Quiz :</div>
