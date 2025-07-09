@@ -4,6 +4,7 @@ const { Schema } = mongoose;
 const courseSchema = new Schema({
   title: { type: String, required: true },
   content: { type: Schema.Types.Mixed, required: true }, // Accepte string ou objet JSON
+  quiz: { type: [Schema.Types.Mixed], default: [] }, // Ajout du champ quiz
   createdAt: { type: Date, default: Date.now },
 });
 
