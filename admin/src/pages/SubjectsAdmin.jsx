@@ -194,7 +194,12 @@ const SubjectsAdmin = () => {
                     ) : (
                       <>
                         <span className="font-bold text-green-700 break-words">{course.title}</span>
-                        <span className="text-gray-700 dark:text-gray-200 break-words">{course.content}</span>
+                        <span className="text-gray-700 dark:text-gray-200 break-words">
+                          {typeof course.content === 'string'
+                            ? course.content
+                            : <pre className="whitespace-pre-wrap">{JSON.stringify(course.content, null, 2)}</pre>
+                          }
+                        </span>
                         <button onClick={() => handleEditCourse(s._id, course)} className="px-2 py-1 bg-violet-500 text-white rounded text-xs">Éditer</button>
                         <button onClick={() => handleDeleteCourse(s._id, course._id)} className="px-2 py-1 bg-red-500 text-white rounded text-xs">Supprimer</button>
                       </>
