@@ -60,6 +60,9 @@ router.get('/:id/courses', async (req, res) => {
 router.post('/:id/courses', adminOnly, async (req, res) => {
   try {
     const { title, content } = req.body;
+    if (!title || !content) {
+      return res.status(400).json({ message: 'Les champs title et content sont obligatoires.' });
+    }
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
     subject.courses.push({ title, content });
