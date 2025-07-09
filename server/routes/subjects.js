@@ -92,9 +92,9 @@ router.delete('/:id/courses/:courseId', adminOnly, async (req, res) => {
   try {
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
-    const course = subject.courses.id(req.params.courseId);
-    if (!course) return res.status(404).json({ message: 'Cours non trouvé.' });
-    course.remove();
+    const courseIndex = subject.courses.findIndex(c => c._id.toString() === req.params.courseId);
+    if (courseIndex === -1) return res.status(404).json({ message: 'Cours non trouvé.' });
+    subject.courses.splice(courseIndex, 1);
     await subject.save();
     res.json({ message: 'Cours supprimé.' });
   } catch (err) {
