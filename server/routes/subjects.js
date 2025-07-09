@@ -92,11 +92,14 @@ router.delete('/:id/courses/:courseId', adminOnly, async (req, res) => {
   try {
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
-    subject.courses.id(req.params.courseId).remove();
+    const course = subject.courses.id(req.params.courseId);
+    if (!course) return res.status(404).json({ message: 'Cours non trouvé.' });
+    course.remove();
     await subject.save();
     res.json({ message: 'Cours supprimé.' });
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur suppression cours:', err);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 });
 
