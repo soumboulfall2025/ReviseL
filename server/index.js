@@ -15,7 +15,8 @@ const app = express();
 const allowedOrigins = [
   'https://revisel-admin.onrender.com',
   'http://localhost:5173', // pour le dev local
-  'https://tontine-pro-client.onrender.com', // nouvel origin autorisé
+  'https://revisel
+  -client.onrender.com', // nouvel origin autorisé
 ];
 
 app.use(cors({

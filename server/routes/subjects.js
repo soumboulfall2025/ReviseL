@@ -66,7 +66,8 @@ router.post('/:id/courses', adminOnly, async (req, res) => {
     await subject.save();
     res.status(201).json(subject.courses[subject.courses.length - 1]);
   } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur.' });
+    console.error('Erreur ajout cours:', err);
+    res.status(500).json({ message: 'Erreur serveur.', error: err.message });
   }
 });
 
