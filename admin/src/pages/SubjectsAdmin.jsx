@@ -116,7 +116,10 @@ const SubjectsAdmin = () => {
   // Suppression d'un cours
   const handleDeleteCourse = async (subjectId, courseId) => {
     await fetch(`${API}/${subjectId}/courses/${courseId}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-    setCourses({ ...courses, [subjectId]: (courses[subjectId] || []).filter(c => c._id !== courseId) });
+    // Recharge la liste des cours depuis l'API pour éviter tout cache ou désynchro
+    const res = await fetch(`${API}/${subjectId}/courses`, { headers: { Authorization: `Bearer ${token}` } });
+    const updatedCourses = await res.json();
+    setCourses({ ...courses, [subjectId]: updatedCourses });
   };
 
   // Edition d'un cours
