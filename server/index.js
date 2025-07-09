@@ -11,7 +11,28 @@ const subjectRoutes = require('./routes/subjects');
 const progressRoutes = require('./routes/progress');
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = [
+  'https://revisel-admin.onrender.com',
+  'http://localhost:5173', // pour le dev local
+  'https://tontine-pro-client.onrender.com', // nouvel origin autorisé
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Autoriser les requêtes sans origin (ex: mobile, curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
