@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import SubjectDetail from './pages/SubjectDetail';
+import QuizPage from './pages/QuizPage';
 import { AuthProvider, useAuth } from './features/authContext.jsx';
 import './App.css';
 
@@ -57,6 +58,11 @@ function App() {
               <Route path="/matieres/:id" element={
                 <PrivateRoute>
                   <SubjectDetail />
+                </PrivateRoute>
+              } />
+              <Route path="/quiz" element={
+                <PrivateRoute>
+                  <QuizPage />
                 </PrivateRoute>
               } />
             </Routes>

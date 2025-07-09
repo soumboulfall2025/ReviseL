@@ -75,18 +75,42 @@ const SubjectsAdmin = () => {
     setEditId(null); setName(''); setDescription(''); setColor(colors[0]);
   };
 
-  // Ajout d'un cours
+  // Ajout d'un cours (classique ou JSON structuré)
   const handleAddCourse = async (subjectId) => {
-    const { title, content } = newCourse[subjectId] || {};
-    if (!title || !content) return;
+    const { title, content, json } = newCourse[subjectId] || {};
+    let body;
+    if (json && json.trim()) {
+      try {
+        body = JSON.parse(json);
+        // Validation avancée : questions et corrections obligatoires si présents
+        if (body.questions && (!Array.isArray(body.questions) || body.questions.length === 0)) {
+          setError('Le champ "questions" doit être un tableau non vide.');
+          return;
+        }
+        if (body.corrections && (!Array.isArray(body.corrections) || body.corrections.length !== body.questions.length)) {
+          setError('Le champ "corrections" doit être un tableau de même longueur que "questions".');
+          return;
+        }
+      } catch {
+        setError('JSON invalide');
+        return;
+      }
+    } else {
+      body = { title, content };
+    }
     const res = await fetch(`${API}/${subjectId}/courses`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ title, content })
+      body: JSON.stringify(body)
     });
-    const data = await res.json();
-    setCourses({ ...courses, [subjectId]: [...(courses[subjectId] || []), data] });
-    setNewCourse({ ...newCourse, [subjectId]: { title: '', content: '' } });
+    if (res.ok) {
+      const newC = await res.json();
+      setCourses({ ...courses, [subjectId]: [...(courses[subjectId] || []), newC] });
+      setNewCourse({ ...newCourse, [subjectId]: {} });
+      setError('');
+    } else {
+      setError('Erreur ajout cours');
+    }
   };
 
   // Suppression d'un cours
@@ -176,6 +200,14 @@ const SubjectsAdmin = () => {
                 ))}
               </div>
               {/* Formulaire ajout cours */}
+              <div className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded p-2 mb-2 text-xs font-mono text-gray-600 dark:text-gray-300">
+                Exemple&nbsp;:<br />
+                {'{'}<br />
+                &nbsp;&nbsp;"titre": "Titre du cours",<br />
+                &nbsp;&nbsp;"questions": ["Question 1 ?", "Question 2 ?"],<br />
+                &nbsp;&nbsp;"corrections": ["Réponse 1", "Réponse 2"]<br />
+                {'}'}
+              </div>
               <form onSubmit={e => { e.preventDefault(); handleAddCourse(s._id); }} className="flex flex-col sm:flex-row gap-2 mt-2 w-full">
                 <input
                   type="text"
@@ -183,7 +215,7 @@ const SubjectsAdmin = () => {
                   className="p-1 rounded border flex-1 min-w-0"
                   value={newCourse[s._id]?.title || ''}
                   onChange={e => setNewCourse({ ...newCourse, [s._id]: { ...newCourse[s._id], title: e.target.value } })}
-                  required
+                  required={!newCourse[s._id]?.json}
                 />
                 <input
                   type="text"
@@ -191,7 +223,14 @@ const SubjectsAdmin = () => {
                   className="p-1 rounded border flex-1 min-w-0"
                   value={newCourse[s._id]?.content || ''}
                   onChange={e => setNewCourse({ ...newCourse, [s._id]: { ...newCourse[s._id], content: e.target.value } })}
-                  required
+                  required={!newCourse[s._id]?.json}
+                />
+                <textarea
+                  placeholder="JSON structuré (optionnel, prioritaire)"
+                  className="p-1 rounded border flex-1 min-w-0 font-mono text-xs"
+                  rows={5}
+                  value={newCourse[s._id]?.json || ''}
+                  onChange={e => setNewCourse({ ...newCourse, [s._id]: { ...newCourse[s._id], json: e.target.value } })}
                 />
                 <button type="submit" className="px-3 py-1 bg-green-600 text-white rounded text-xs">Ajouter</button>
               </form>

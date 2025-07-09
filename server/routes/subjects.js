@@ -111,4 +111,20 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Endpoint pour toutes les fiches de révision/quiz
+router.get('/all-courses', async (req, res) => {
+  try {
+    const subjects = await Subject.find();
+    const allCourses = subjects.flatMap(s =>
+      (s.courses || []).map(c => ({
+        ...c.toObject(),
+        subject: { _id: s._id, name: s.name, color: s.color }
+      }))
+    );
+    res.json(allCourses);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+});
+
 module.exports = router;
