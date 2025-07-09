@@ -66,9 +66,17 @@ const SubjectDetail = () => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-2 text-green-700">{subject.name}</h2>
-      {subject.description && <p className="mb-4 text-gray-600 dark:text-gray-300">{subject.description}</p>}
-      <div className="mt-8">
+      <div className="mt-4 mb-6">
+        <button
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow-md hover:bg-green-600 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400"
+          onClick={() => navigate(-1)}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          Retour
+        </button>
+      </div>
+      <h2 className="text-2xl font-extrabold mb-4 text-violet-800">{subject.name}</h2>
+      <div className="mt-4 mb-6">
         <h3 className="text-lg font-semibold mb-4 text-violet-700">Cours</h3>
         <div className="space-y-6">
           {courses.length === 0 && <div className="text-gray-500">Aucun cours pour cette matière.</div>}
