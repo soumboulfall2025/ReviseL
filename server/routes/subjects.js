@@ -59,9 +59,12 @@ router.get('/:id/courses', async (req, res) => {
 // Ajouter un cours à une matière
 router.post('/:id/courses', adminOnly, async (req, res) => {
   try {
-    const { title, content } = req.body;
+    // Mapping automatique des champs français vers anglais
+    let { title, content } = req.body;
+    if (!title && req.body.titre) title = req.body.titre;
+    if (!content && req.body.contenu) content = req.body.contenu;
     if (!title || !content) {
-      return res.status(400).json({ message: 'Les champs title et content sont obligatoires.' });
+      return res.status(400).json({ message: 'Les champs title/titre et content/contenu sont obligatoires.' });
     }
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
