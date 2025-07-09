@@ -31,6 +31,31 @@ const SubjectDetail = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // Fonction d'affichage robuste pour content
+  function renderContent(content) {
+    if (typeof content === 'string') {
+      return <span>{content}</span>;
+    }
+    if (typeof content === 'object' && content !== null) {
+      return (
+        <div>
+          {Object.entries(content).map(([key, value]) => (
+            <div key={key}>
+              <strong>{key} :</strong>{' '}
+              {Array.isArray(value)
+                ? <ul>{value.map((v, i) => <li key={i}>{v}</li>)}</ul>
+                : typeof value === 'object'
+                  ? renderContent(value)
+                  : String(value)
+              }
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  }
+
   if (loading) return <Loader />;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!subject) return <div>Matière introuvable.</div>;
@@ -46,7 +71,7 @@ const SubjectDetail = () => {
           {courses.map((course) => (
             <div key={course._id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
               <div className="font-bold text-green-700 mb-1">{course.title}</div>
-              <div className="text-gray-700 dark:text-gray-200 mb-2">{course.content}</div>
+              <div className="text-gray-700 dark:text-gray-200 mb-2">{renderContent(course.content ?? '')}</div>
               <button
                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
                 onClick={() => navigate(`/soumission?subject=${subject._id}&course=${course._id}`)}
