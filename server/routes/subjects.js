@@ -62,7 +62,16 @@ router.post('/:id/courses', adminOnly, async (req, res) => {
     // Mapping automatique des champs français vers anglais
     let { title, content } = req.body;
     if (!title && req.body.titre) title = req.body.titre;
+    // Fusionne tous les champs non standards dans content
     if (!content && req.body.contenu) content = req.body.contenu;
+    if (!content) {
+      // On prend tous les champs sauf title/titre et on les met dans content
+      const reserved = ['title', 'titre', 'content', 'contenu'];
+      content = {};
+      Object.entries(req.body).forEach(([key, value]) => {
+        if (!reserved.includes(key)) content[key] = value;
+      });
+    }
     if (!title || !content) {
       return res.status(400).json({ message: 'Les champs title/titre et content/contenu sont obligatoires.' });
     }
