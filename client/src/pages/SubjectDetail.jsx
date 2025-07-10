@@ -31,7 +31,7 @@ const SubjectDetail = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // Fonction d'affichage robuste et "cartée" pour content
+  // Fonction d'affichage du contenu (robuste)
   function renderContent(content) {
     if (typeof content === 'string') {
       return <span>{content}</span>;
@@ -43,9 +43,8 @@ const SubjectDetail = () => {
             <div
               key={key}
               className="bg-gray-50 dark:bg-gray-900 rounded p-3 border border-gray-200 dark:border-gray-700 shadow transition-transform duration-300 hover:scale-105"
-              style={{ animation: 'fadeIn 0.5s' }}
             >
-              <div className="font-semibold text-violet-700 mb-1 animate-pulse">{key.replace(/_/g, ' ')} :</div>
+              <div className="font-semibold text-violet-700 mb-1">{key.replace(/_/g, ' ')} :</div>
               {Array.isArray(value)
                 ? <ul className="list-disc list-inside ml-4">{value.map((v, i) => <li key={i}>{v}</li>)}</ul>
                 : typeof value === 'object'
@@ -71,32 +70,49 @@ const SubjectDetail = () => {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow-md hover:bg-green-600 transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-green-400"
           onClick={() => navigate(-1)}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
           Retour
         </button>
       </div>
+
       <h2 className="text-2xl font-extrabold mb-4 text-violet-800">{subject.name}</h2>
+
       <div className="mt-4 mb-6">
         <h3 className="text-lg font-semibold mb-4 text-violet-700">Cours</h3>
         <div className="space-y-6">
           {courses.length === 0 && <div className="text-gray-500">Aucun cours pour cette matière.</div>}
+
           {courses.map((course) => (
             <div key={course._id} className="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
               <div className="font-bold text-green-700 mb-1">{course.title}</div>
-              <div className="text-gray-700 dark:text-gray-200 mb-2">{renderContent(course.content ?? '')}</div>
+              <div className="text-gray-700 dark:text-gray-200 mb-2">
+                {renderContent(course.content ?? '')}
+              </div>
+
               <button
                 className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
                 onClick={() => navigate(`/soumission?subject=${subject._id}&course=${course._id}`)}
               >
                 Faire le devoir
               </button>
-              {/* Affichage du quiz s'il existe */}
+
+              {/* Quiz dynamique */}
               {course.quiz && Array.isArray(course.quiz) && course.quiz.length > 0 && (
                 <div className="mt-4">
                   <div className="font-semibold text-violet-700 mb-2">Quiz disponible pour ce cours.</div>
                   <button
                     className="mt-3 px-4 py-2 bg-violet-600 text-white rounded hover:bg-violet-700 transition font-bold shadow"
-                    onClick={() => navigate(`/quiz?subject=${subject._id}&course=${course._id}`)}
+                    onClick={() => navigate('/quiz', {
+                      state: {
+                        quiz: {
+                          titre: course.quizTitle || `Quiz - ${course.title}`,
+                          instructions: course.quizInstructions || "Répondez aux questions suivantes en choisissant la bonne réponse.",
+                          questions: course.quiz
+                        }
+                      }
+                    })}
                   >
                     Faire le quiz
                   </button>
@@ -106,6 +122,7 @@ const SubjectDetail = () => {
           ))}
         </div>
       </div>
+
       <div className="mt-6 text-sm text-gray-500">ID: {subject._id}</div>
     </div>
   );
