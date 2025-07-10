@@ -60,13 +60,13 @@ router.get('/:id/courses', async (req, res) => {
 router.post('/:id/courses', adminOnly, async (req, res) => {
   try {
     // Mapping automatique des champs français vers anglais
-    let { title, content } = req.body;
+    let { title, content, quiz } = req.body;
     if (!title && req.body.titre) title = req.body.titre;
     // Fusionne tous les champs non standards dans content
     if (!content && req.body.contenu) content = req.body.contenu;
     if (!content) {
-      // On prend tous les champs sauf title/titre et on les met dans content
-      const reserved = ['title', 'titre', 'content', 'contenu'];
+      // On prend tous les champs sauf title/titre, content/contenu, quiz et on les met dans content
+      const reserved = ['title', 'titre', 'content', 'contenu', 'quiz'];
       content = {};
       Object.entries(req.body).forEach(([key, value]) => {
         if (!reserved.includes(key)) content[key] = value;
@@ -77,7 +77,7 @@ router.post('/:id/courses', adminOnly, async (req, res) => {
     }
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
-    subject.courses.push({ title, content });
+    subject.courses.push({ title, content, quiz: Array.isArray(quiz) ? quiz : [] });
     await subject.save();
     res.status(201).json(subject.courses[subject.courses.length - 1]);
   } catch (err) {
@@ -89,13 +89,14 @@ router.post('/:id/courses', adminOnly, async (req, res) => {
 // Modifier un cours
 router.put('/:id/courses/:courseId', adminOnly, async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, quiz } = req.body;
     const subject = await Subject.findById(req.params.id);
     if (!subject) return res.status(404).json({ message: 'Matière non trouvée.' });
     const course = subject.courses.id(req.params.courseId);
     if (!course) return res.status(404).json({ message: 'Cours non trouvé.' });
     course.title = title;
     course.content = content;
+    if (quiz) course.quiz = Array.isArray(quiz) ? quiz : [];
     await subject.save();
     res.json(course);
   } catch (err) {
