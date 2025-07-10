@@ -4,23 +4,26 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const QuizPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Récupérer le quiz dynamique envoyé via navigate state
   const quizData = location.state?.quiz;
+
+  // Vérification si quizData existe
+  if (!quizData || !quizData.questions || quizData.questions.length === 0) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-8 text-center">
+        <p className="text-red-600 font-bold">Aucun quiz disponible.</p>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-4 px-4 py-2 rounded bg-violet-600 text-white font-bold hover:bg-green-600 transition-all"
+        >
+          Retour
+        </button>
+      </div>
+    );
+  }
 
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-
-  // Si aucun quiz n'est passé, affiche un message d'erreur et retour
-  if (!quizData) {
-    return (
-      <div className="max-w-xl mx-auto px-4 py-20 text-center">
-        <p className="text-xl font-semibold mb-4">Aucun quiz sélectionné.</p>
-        <button onClick={() => navigate(-1)} className="px-4 py-2 rounded bg-violet-600 text-white font-bold hover:bg-green-600 transition-all">Retour</button>
-      </div>
-    );
-  }
 
   const current = quizData.questions[step];
 
@@ -37,21 +40,15 @@ const QuizPage = () => {
 
   return (
     <div className="max-w-xl mx-auto px-4 py-8">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow hover:bg-green-600 transition-all flex items-center gap-2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
+      <button onClick={() => navigate(-1)} className="mb-6 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow hover:bg-green-600 transition-all flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
         Retour
       </button>
-
       <h2 className="text-2xl font-bold mb-2 text-green-700">{quizData.titre}</h2>
       <p className="mb-6 text-gray-600 dark:text-gray-300">{quizData.instructions}</p>
 
       {!showResult ? (
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border-t-4 border-violet-400 animate-fadeIn">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border-t-4 border-violet-400">
           <div className="text-lg font-semibold mb-4 text-violet-700">{current.question}</div>
           <div className="grid gap-3">
             {current.choix.map((c) => (
@@ -65,20 +62,15 @@ const QuizPage = () => {
               </button>
             ))}
           </div>
-
           {answers[step] && (
-            <div
-              className={`mt-4 p-3 rounded ${
-                answers[step] === current.reponse ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-              }`}
-            >
+            <div className={`mt-4 p-3 rounded ${answers[step] === current.reponse ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
               {answers[step] === current.reponse ? 'Bonne réponse !' : 'Mauvaise réponse.'}
               <div className="mt-2 text-sm text-gray-600">{current.explication}</div>
             </div>
           )}
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border-t-4 border-green-400 animate-fadeIn">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg p-6 border-t-4 border-green-400">
           <div className="text-2xl font-bold text-green-700 mb-2">Résultat</div>
           <div className="text-lg mb-4">Score : {score} / {quizData.questions.length}</div>
           <ul className="mb-4">
@@ -93,11 +85,7 @@ const QuizPage = () => {
             ))}
           </ul>
           <button
-            onClick={() => {
-              setStep(0);
-              setAnswers([]);
-              setShowResult(false);
-            }}
+            onClick={() => { setStep(0); setAnswers([]); setShowResult(false); }}
             className="px-4 py-2 rounded bg-violet-600 text-white font-bold hover:bg-green-600 transition-all"
           >
             Recommencer
