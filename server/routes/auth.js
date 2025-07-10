@@ -10,6 +10,7 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    console.log('Mot de passe reçu :', password); 
     if (!username || !email || !password) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
@@ -29,6 +30,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Mot de passe reçu :', password);
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Utilisateur introuvable.' });
     const valid = await bcrypt.compare(password, user.password);
