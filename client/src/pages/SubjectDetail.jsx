@@ -93,24 +93,7 @@ const SubjectDetail = () => {
               {/* Affichage du quiz s'il existe */}
               {course.quiz && Array.isArray(course.quiz) && course.quiz.length > 0 && (
                 <div className="mt-4">
-                  <div className="font-semibold text-violet-700 mb-2">Quiz</div>
-                  <div className="space-y-3">
-                    {course.quiz.map((q, idx) => (
-                      <div key={idx} className="bg-violet-50 dark:bg-violet-900 rounded p-3 border border-violet-200 dark:border-violet-700 shadow-sm">
-                        <div className="font-medium text-violet-800 mb-1">Q{idx + 1}. {q.question}</div>
-                        {q.choices && Array.isArray(q.choices) && (
-                          <ul className="list-disc ml-6 text-gray-700 dark:text-gray-200">
-                            {q.choices.map((choice, i) => (
-                              <li key={i}>{choice}</li>
-                            ))}
-                          </ul>
-                        )}
-                        {q.explanation && (
-                          <div className="mt-2 text-xs text-gray-500 italic">Explication : {q.explanation}</div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  <div className="font-semibold text-violet-700 mb-2">Quiz disponible pour ce cours.</div>
                   <button
                     className="mt-3 px-4 py-2 bg-violet-600 text-white rounded hover:bg-violet-700 transition font-bold shadow"
                     onClick={() => navigate(`/quiz?subject=${subject._id}&course=${course._id}`)}
