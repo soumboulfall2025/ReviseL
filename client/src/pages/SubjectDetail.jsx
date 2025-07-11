@@ -109,7 +109,12 @@ const SubjectDetail = () => {
                         quiz: {
                           titre: course.quizTitle || `Quiz - ${course.title}`,
                           instructions: course.quizInstructions || "Répondez aux questions suivantes en choisissant la bonne réponse.",
-                          questions: course.quiz
+                          questions: course.quiz.map(q => ({
+                            question: q.question,
+                            choix: q.choices, // tableau de choix
+                            reponse: q.choices[q.answer], // valeur du choix correct
+                            explication: q.explanation
+                          }))
                         }
                       }
                     })}
