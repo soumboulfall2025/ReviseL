@@ -1,57 +1,26 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-const quizData = {
-  titre: "Quiz Madame Bovary",
-  instructions: "Répondez aux questions suivantes en choisissant la bonne réponse.",
-  questions: [
-    {
-      id: 1,
-      question: "Quel mouvement littéraire caractérise Madame Bovary ?",
-      type: "QCM",
-      choix: [
-        "Romantisme",
-        "Réalisme",
-        "Symbolisme",
-        "Classicisme"
-      ],
-      reponse: "Réalisme",
-      explication: "Madame Bovary est un roman réaliste qui critique les illusions romantiques."
-    },
-    {
-      id: 2,
-      question: "Quelle est la cause principale de la tragédie d’Emma Bovary ?",
-      type: "QCM",
-      choix: [
-        "Son ennui et ses illusions romantiques",
-        "Une maladie incurable",
-        "Un accident",
-        "Une trahison familiale"
-      ],
-      reponse: "Son ennui et ses illusions romantiques",
-      explication: "Emma est déçue par la vie réelle qui ne correspond pas à ses rêves romantiques."
-    },
-    {
-      id: 3,
-      question: "Emma Bovary est-elle un héros ou un anti-héros ?",
-      type: "QCM",
-      choix: [
-        "Héros",
-        "Anti-héros",
-        "Personnage secondaire",
-        "Narrateur"
-      ],
-      reponse: "Anti-héros",
-      explication: "Emma incarne un anti-héros car elle échoue dans sa quête de bonheur et cause sa propre chute."
-    }
-  ]
-};
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const QuizPage = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const quizData = location.state?.quiz;
+
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
-  const navigate = useNavigate();
+
+  if (!quizData) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <button onClick={() => navigate(-1)} className="mb-6 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow hover:bg-green-600 transition-all flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          Retour
+        </button>
+        <div className="text-red-500">Aucun quiz trouvé pour cette leçon.</div>
+      </div>
+    );
+  }
 
   const current = quizData.questions[step];
   const handleAnswer = (choix) => {
