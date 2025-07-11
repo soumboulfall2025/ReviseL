@@ -10,19 +10,35 @@ const QuizPage = () => {
   const [answers, setAnswers] = useState([]);
   const [showResult, setShowResult] = useState(false);
 
-  if (!quizData) {
+  // Vérification des données quiz
+  if (
+    !quizData ||
+    !Array.isArray(quizData.questions) ||
+    quizData.questions.length === 0
+  ) {
     return (
       <div className="max-w-xl mx-auto px-4 py-8">
         <button onClick={() => navigate(-1)} className="mb-6 px-4 py-2 rounded-full bg-violet-600 text-white font-bold shadow hover:bg-green-600 transition-all flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           Retour
         </button>
-        <div className="text-red-500">Aucun quiz trouvé pour cette leçon.</div>
+        <div className="text-red-500">Aucun quiz valide trouvé pour cette leçon.</div>
       </div>
     );
   }
 
   const current = quizData.questions[step];
+
+  // Vérification de la question courante
+  if (!current || !Array.isArray(current.choix)) {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-8">
+        <div className="text-red-500">Question ou choix manquant dans le quiz.</div>
+        <button onClick={() => navigate(-1)} className="mt-4 px-4 py-2 rounded bg-violet-600 text-white font-bold hover:bg-green-600 transition-all">Retour</button>
+      </div>
+    );
+  }
+
   const handleAnswer = (choix) => {
     setAnswers([...answers, choix]);
     if (step < quizData.questions.length - 1) {
@@ -69,7 +85,7 @@ const QuizPage = () => {
           <div className="text-lg mb-4">Score : {score} / {quizData.questions.length}</div>
           <ul className="mb-4">
             {quizData.questions.map((q, i) => (
-              <li key={q.id} className="mb-2">
+              <li key={q.id || i} className="mb-2">
                 <span className="font-semibold">{q.question}</span><br />
                 <span className={answers[i] === q.reponse ? 'text-green-700' : 'text-red-700'}>
                   Votre réponse : {answers[i] || <em>Non répondu</em>}
